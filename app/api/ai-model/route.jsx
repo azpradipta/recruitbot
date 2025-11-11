@@ -12,26 +12,34 @@ export async function POST(req) {
     .replace('{{duration}}', duration)
     .replace('{{type}}', type);
 
-    console.log(FINAL_PROMPT);
+    console.log("Sending to Groq AI...");
 
-    try{
-    const openai = new OpenAI({
-        baseURL: "https://openrouter.ai/api/v1",
-        apiKey: process.env.OPENROUTER_API_KEY,  
-    })
-    const completion = await openai.chat.completions.create({
-        model: "google/gemini-2.0-flash-exp:free",
-        messages: [
-            { role: "user", content: FINAL_PROMPT }
-        ],
-        // response_format: 'json'
-    })
-    // console.log(completion.choices[0].message)
-    return NextResponse.json(completion.choices[0].message)
-} 
-catch(e)
-{
-    console.log(e)
-    return NextResponse.json(e)
-}
+    try {
+        
+        const groq = new OpenAI({
+            baseURL: "https://api.groq.com/openai/v1",
+            apiKey: process.env.GROQ_API_KEY,
+        })
+        
+        const completion = await groq.chat.completions.create({
+            model: "llama-3.1-8b-instant", 
+            messages: [
+                { role: "user", content: FINAL_PROMPT }
+            ],
+        })
+        
+        console.log("✅ Groq response received!");
+        return NextResponse.json(completion.choices[0].message)
+    } 
+    catch(e) {
+        console.error("❌ Groq Error:", e);
+        
+        return NextResponse.json(
+            { 
+                error: e.message || "Groq API Error",
+                status: e.status 
+            },
+            { status: e.status || 500 }
+        );
+    }
 }
