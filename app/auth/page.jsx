@@ -3,13 +3,18 @@ import { Button } from '@/components/ui/button'
 import { supabase } from '@/service/supabaseClient'
 import Image from 'next/image'
 import React from 'react'
+import { useRouter } from 'next/navigation' 
 
 function Login() {
+  const router = useRouter(); 
 
   // Used to Sign In With Google
   const signInWithGoogle = async () => {
-    const {error} = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`
+      }
     })
 
     if (error) {

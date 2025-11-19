@@ -4,11 +4,16 @@ import React, { useEffect , useState } from 'react'
 import { toast } from "sonner"
 import QuestionListContainer from './QuestionListContainer';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/service/supabaseClient';
+import { useUser } from '@/app/provider';
+import { v4 as uuidv4 } from 'uuid';
 
-function QuestionList({ formData }) {
+function QuestionList({ formData, onCreateLink }) {
 
   const [loading, setLoading] = useState(true);
   const [questionList, setQuestionList] = useState();
+  const {user}=useUser();
+  const [saveLoading, setSaveLoading] = useState(false);
   useEffect(() => {
     if (formData) {
       GenerateQuestionList();
@@ -35,8 +40,24 @@ function QuestionList({ formData }) {
     }  
   }
 
-  const onFinish=()=>{
+  const onFinish=async ()=>{
+    setSaveLoading(true);
+    const interview_id=uuidv4();
+    const { data, error } = await supabase
+      .from('Interviews')
+      .insert([
+        { 
+          ...formData,
+          questionList:questionList,
+          userEmail:user?.email,
+          interview_id:interview_id
+         },
+      ])
+      .select()
+      setSaveLoading(false);
 
+      onCreateLink(interview_id)
+         
   }
 
   return (
@@ -61,8 +82,10 @@ function QuestionList({ formData }) {
         }
 
         <div className='flex justify-end mt-10'>
-          <Button onClick={()=>onFinish()}>Finish</Button>
-        </div>
+          <Button onClick={()=>onFinish()} disabled={saveLoading}>
+            {saveLoading && <Loader2Icon className='animate-spin' />}
+            Create Interview Link & Finish</Button>
+        </div> 
         
     </div>
   )

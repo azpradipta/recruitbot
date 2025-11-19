@@ -70,6 +70,19 @@ Interview Type: {{type}}
 3. Adjust the number and depth of questions to match the interview duration
 4. Ensure questions match the tone and structure of a real-life {{type}} interview
 
+⏱️ QUESTION COUNT RULES (STRICTLY FOLLOW):
+- 5 Min interview  → Generate EXACTLY 3-4 questions (quick screening)
+- 15 Min interview → Generate EXACTLY 6-8 questions (standard interview)
+- 30 Min interview → Generate EXACTLY 10-12 questions (in-depth interview)
+- 45 Min interview → Generate EXACTLY 14-16 questions (comprehensive interview)
+- 60 Min interview → Generate EXACTLY 18-20 questions (thorough assessment)
+
+💡 DURATION GUIDELINES:
+- Assume each question takes ~1.5-3 minutes to answer depending on complexity
+- For {{duration}} interview, prioritize quality over quantity
+- Mix different question types based on {{type}}
+- Balance technical depth with time constraints
+
 🎯 IMPORTANT: Return ONLY valid JSON in this EXACT format:
 
 {
