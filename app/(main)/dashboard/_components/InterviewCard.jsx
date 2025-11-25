@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Copy, Send } from 'lucide-react'
+import { Briefcase, Copy, Send } from 'lucide-react'
 import moment from 'moment'
 import React from 'react'
 import { toast } from 'sonner'
@@ -19,7 +19,9 @@ function InterviewCard({ interview }) {
     return (
         <div className='p-5 bg-white rounded-lg border'>
             <div className='flex items-center justify-between'>
-                <div className='h-[40px] w-[40px] bg-primary rounded-full'></div>
+                <div className='h-[40px] w-[40px] bg-primary rounded-full flex items-center justify-center'>
+                    <Briefcase className='w-5 h-5 text-white' />
+                </div>
                 <h2 className='text-sm'>{moment(interview?.created_at).format('DD MMM yyy')}</h2>
             </div>
                 <h2 className='mt-3 font-bold text-lg'>{interview?.jobPosition}</h2>

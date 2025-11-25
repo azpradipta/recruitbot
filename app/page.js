@@ -16,9 +16,9 @@ export default function Home() {
               <Image 
                 src='/logo.png' 
                 alt='Recruitbot' 
-                width={150} 
-                height={40}
-                className='h-10 w-auto'
+                width={200} 
+                height={200}
+                className='h-12 w-auto'
               />
             </Link>
             
