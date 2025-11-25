@@ -15,6 +15,7 @@ function Interview() {
   console.log(interview_id);
   const [interviewData, setInterviewData]=useState();
   const [userName, setUserName]=useState();
+  const [userEmail, setUserEmail]=useState();
   const [loading, setLoading]=useState(false);
   const {interviewInfo, setInterviewInfo} = useContext(InterviewDataContext);
   const router = useRouter();
@@ -57,6 +58,7 @@ function Interview() {
       console.log(Interviews[0]);
       setInterviewInfo({
         userName:userName,
+        userEmail: userEmail,
         interviewData:Interviews[0]
       });
       router.push('/interview/'+interview_id+'/start')
@@ -66,18 +68,23 @@ function Interview() {
   return (
     <div className='px-10 md:px-28 lg:px-48 xl:px-80 mt-7 overflow-x-hidden'>
         <div className='flex flex-col items-center justify-center border rounded-lg bg-white p-7 lg:px-33 xl:px-52 mb-20'>
-             <Image src={'/logo.png'} alt="logo" width={200} height={100} className='w-[150px]'/>
-             <h2 className='mt-3'>AI-Powered Interview Platform</h2>
+              <Image src={'/logo.png'} alt="logo" width={200} height={100} className='w-[150px]'/>
+              <h2 className='mt-3'>AI-Powered Interview Platform</h2>
 
-             <Image src={'/interview.png'} alt='interview' width={500} height={500} className='w-[250px] my-6 rounded-lg'/>
+              <Image src={'/interview.png'} alt='interview' width={500} height={500} className='w-[250px] my-6 rounded-lg'/>
 
-             <h2 className='font-bold text-lg'>{interviewData?.jobPosition}</h2>
-             <h2 className='flex gap-2 items-center text-gray-500 mt-3'> <Clock className='h-4 w-4'/>{interviewData?.duration}</h2>
+              <h2 className='font-bold text-lg'>{interviewData?.jobPosition}</h2>
+              <h2 className='flex gap-2 items-center text-gray-500 mt-3'> <Clock className='h-4 w-4'/>{interviewData?.duration}</h2>
 
-             <div className='w-full max-w-sm'>
+            <div className='w-full max-w-sm mt-2'>
               <h2>Enter your full name</h2>
               <Input placeholder='e.g. Faisal Alexander' onChange={(event)=>setUserName(event.target.value)}/>
-             </div>
+            </div>
+
+            <div className='w-full max-w-sm mt-2'>
+              <h2>Enter your Email</h2>
+              <Input placeholder='e.g. faisal@gmail.com' onChange={(event)=>setUserEmail(event.target.value)}/>
+            </div>
 
             <div className='p-3 bg-blue-100 flex gap-4 rounded-lg mt-5 '>
                 <Info className='text-primary'/>

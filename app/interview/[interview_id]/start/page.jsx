@@ -6,12 +6,21 @@ import Image from 'next/image'
 import Vapi from '@vapi-ai/web';
 import AlertConfirmation from './_components/AlertConfirmation';
 import { toast } from 'sonner';
+import TimerComponent from './_components/TimerComponent';
+import axios from 'axios';
+import { supabase } from '@/service/supabaseClient';
+import { useParams, useRouter } from 'next/navigation';
 
 function StartInterview() {
   const { interviewInfo, setInterviewInfo } = useContext(InterviewDataContext);
   const vapiRef = useRef(null); 
+  const conversationRef = useRef([]); 
   const [activeUser, setActiveUser] = useState(false);
   const [isCallActive, setIsCallActive] = useState(false);
+  const [conversation, setConversation] = useState();
+  const { interview_id } = useParams();
+  const router = useRouter();
+  const [loading, setLoading] = useState();
 
   // Initialize Vapi 
   useEffect(() => {
@@ -38,8 +47,78 @@ function StartInterview() {
       vapiRef.current.on("call-end", () => {
         console.log("❌ Call has ended.");
         toast.info('Interview Ended');
+        GenerateFeedback();
         setIsCallActive(false);
       });
+
+      vapiRef.current.on("message", (message) => {
+        console.log(message?.conversation);
+        conversationRef.current = message?.conversation; 
+        setConversation(message?.conversation);
+      });
+
+      const GenerateFeedback = async () => {
+        try { 
+          const result = await axios.post('/api/ai-feedback', {
+            conversation: conversationRef.current 
+          });
+
+          console.log(result?.data);
+          
+          const Content = result.data.feedback || result.data.content;
+          
+          let FINAL_CONTENT = Content
+            .replace(/```json/g, '')
+            .replace(/```/g, '')
+            .trim();
+          
+          console.log("Raw content:", FINAL_CONTENT);
+          
+          let feedbackData;
+          try {
+            feedbackData = JSON.parse(FINAL_CONTENT);
+          } catch (parseError) {
+            console.error("JSON Parse Error:", parseError);
+            console.log("Content that failed:", FINAL_CONTENT);
+            feedbackData = { 
+              summary: FINAL_CONTENT,
+              parseError: true 
+            };
+          }
+          
+          console.log("Parsed feedback:", feedbackData);
+          
+          // Save to Database
+          const { data, error } = await supabase
+            .from('interview-feedback')
+            .insert([
+              { 
+                userName: interviewInfo?.userName, 
+                userEmail: interviewInfo?.userEmail, 
+                interview_id: interview_id,
+                feedback: feedbackData, 
+                recommended: false
+              },
+            ])
+            .select();
+          
+          if (error) {
+            console.error("Database error:", error);
+            toast.error('Failed to save feedback');
+            return;
+          }
+          
+          console.log(data);
+          toast.success('Feedback saved successfully!');
+          router.replace('/interview/' + interview_id + "/completed");
+          setLoading(false);
+          
+        } catch (error) { 
+          console.error("❌ GenerateFeedback Error:", error);
+          toast.error('Failed to generate feedback');
+          setLoading(false);
+        }
+      }
 
       vapiRef.current.on("error", (error) => {
         console.error("⚠️ Vapi Error:", error);
@@ -117,7 +196,7 @@ function StartInterview() {
     vapiRef.current?.start(assistantOptions);
   }
 
-  const stopInterview = () => {
+  const stopInterview = async () => {
     console.log("🛑 Stopping interview manually...");
     if (vapiRef.current) {
       vapiRef.current.stop();
@@ -130,10 +209,7 @@ function StartInterview() {
     <div className='p-20 lg:px-48 xl:px-56'>
       <h2 className='font-bold text-xl flex justify-between'>
         AI Interview Session
-        <span className='flex gap-2 items-center'>
-          <Timer className='h-5 w-5'/>
-          00:00:00
-        </span>
+        <TimerComponent isCallActive={isCallActive} />
       </h2>
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-7 mt-5'>

@@ -51,7 +51,6 @@ export const InterviewType = [
     }
 ]
 
-// service/Constants.js
 export const QUESTIONS_PROMPT = `You are an expert technical interviewer.
 
 Based on the following inputs, generate a well-structured list of high-quality interview questions:
@@ -107,3 +106,46 @@ Interview Type: {{type}}
 - Start response with { and end with }
 
 Generate the interview questions now:`;
+
+
+export const FEEDBACK_PROMPT = `You are an expert interview evaluator. Analyze the following interview conversation and provide detailed feedback.
+
+Interview Conversation:
+{{conversation}}
+
+Based on this conversation, evaluate the candidate's performance and provide:
+1. Technical Skills rating (0-10)
+2. Communication rating (0-10)
+3. Problem Solving rating (0-10)
+4. Experience rating (0-10)
+5. A 3-sentence summary of the interview
+6. A hiring recommendation with reasoning
+
+⚠️ IMPORTANT: Return ONLY valid JSON in this EXACT format:
+
+{
+  "feedback": {
+    "rating": {
+      "technicalSkills": 5,
+      "communication": 6,
+      "problemSolving": 4,
+      "experience": 7
+    },
+    "summary": "Write a concise 3-sentence summary here. Include key strengths and areas for improvement. Be specific and constructive.",
+    "recommendation": "Yes",
+    "recommendationMsg": "Explain why you recommend or don't recommend this candidate in one clear sentence."
+  }
+}
+
+⚠️ RULES:
+- Return ONLY the JSON object, nothing else
+- Do NOT add markdown code blocks (\`\`\`json)
+- Use double quotes (") for all strings
+- All property names must be in double quotes
+- Numbers should NOT be in quotes
+- Boolean values: use "Yes" or "No" as strings
+- Start response with { and end with }
+- Ensure summary is exactly 3 sentences
+- Make recommendation either "Yes" or "No"
+
+Generate the feedback now:`;
