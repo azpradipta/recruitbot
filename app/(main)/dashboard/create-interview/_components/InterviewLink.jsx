@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link'
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, Clock, Copy, Link2, List, Mail, MessageCircle, PhoneCall, PhoneCallIcon, Plus } from 'lucide-react'; // ✅ Change Link to Link2
+import { ArrowLeft, Calendar, Clock, Copy, Link2, List, Mail, MessageCircle, PhoneCall, PhoneCallIcon, Plus, Send } from 'lucide-react'; // ✅ Change Link to Link2
 import { toast } from 'sonner';
 
 function InterviewLink({interview_id, formData, }) {
@@ -17,6 +17,24 @@ function InterviewLink({interview_id, formData, }) {
     await navigator.clipboard.writeText(url);
     toast('Link Copied')
   }
+
+  const onShare = async () => {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Recruitbot Interview',
+        text: 'Here is the interview link:',
+        url: url,
+      });
+    } catch (error) {
+      console.log("Share cancelled", error);
+    }
+  } else {
+    navigator.clipboard.writeText(url);
+    toast('Link copied to clipboard');
+  }
+};
+
 
   return (
     <div className='flex flex-col items-center justify-center mt-10'>
@@ -47,20 +65,16 @@ function InterviewLink({interview_id, formData, }) {
         </div>
 
         <div className='mt-7 bg-white p-5 rounded-lg w-full'>
-            <h2 className='font-bold'>Share Via</h2>
-            <div className='flex gap-7 mt-2'>
-                <Button variant={'outline'} className=''> <Mail/> Email </Button>
-                {/* <Button variant={'outline'} className=''> <Mail/> Slack </Button> */}
-                <Button variant={'outline'} className=''> <MessageCircle/> Whatsapp </Button>
-            </div>
+            <h2 className='font-bold'>Share Interview</h2>
+            <Button onClick={onShare} variant="outline" className='mt-3 flex items-center gap-2'> <Send className="h-4 w-4" /> Share </Button>
         </div>
         <div className='flex w-full gap-5 justify-between mt-6'>
             <Link href={'/dashboard'}>
                 <Button variant={'outline'}> <ArrowLeft/> Back to Dashboard </Button>
             </Link>
-            <Link href={'/dashboard'}>
+            {/* <Link href={'/dashboard'}>
                 <Button> <Plus/> Create New Interview </Button>
-            </Link>
+            </Link> */}
         </div>
     </div>
   )

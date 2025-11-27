@@ -1,6 +1,6 @@
 "use client"
 import { InterviewDataContext } from '@/context/InterviewDataContext'
-import { Mic, Phone, Timer } from 'lucide-react';
+import { Mic, MicOff, Phone } from 'lucide-react';
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Vapi from '@vapi-ai/web';
@@ -21,6 +21,7 @@ function StartInterview() {
   const { interview_id } = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState();
+  const [isMuted, setIsMuted] = useState(false); 
 
   // Initialize Vapi 
   useEffect(() => {
@@ -205,6 +206,25 @@ function StartInterview() {
     }
   }
 
+  // <<< NEW: toggle mute mic >>>
+  const toggleMute = () => {
+    if (!vapiRef.current || !isCallActive) {
+      toast.info('Call is not active');
+      return;
+    }
+
+    const nextMuted = !isMuted;
+
+    try {
+      vapiRef.current.setMuted(nextMuted);
+      setIsMuted(nextMuted);
+      toast(nextMuted ? 'Microphone muted' : 'Microphone unmuted');
+    } catch (error) {
+      console.error('Error setting mute:', error);
+      toast.error('Failed to change microphone state');
+    }
+  };
+
   return (
     <div className='p-20 lg:px-48 xl:px-56'>
       <h2 className='font-bold text-xl flex justify-between'>
@@ -248,9 +268,18 @@ function StartInterview() {
       {/* Controls */}
       <div className='flex items-center gap-5 justify-center mt-7'>
         {/* Mic Button */}
-        <div className='h-14 w-14 bg-gray-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-600 transition-colors'>
-          <Mic className='h-6 w-6 text-white'/>
-        </div>
+<div
+  onClick={toggleMute}
+  className={`h-14 w-14 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200
+    ${isMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-500 hover:bg-gray-600'}`}
+>
+  {isMuted ? (
+    <MicOff className="h-6 w-6 text-white" />
+  ) : (
+    <Mic className="h-6 w-6 text-white" />
+  )}
+</div>
+
 
         {/* End Call Button */}
         <AlertConfirmation stopInterview={stopInterview}>
