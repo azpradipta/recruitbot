@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Briefcase, Copy, Send } from 'lucide-react'
 import moment from 'moment'
+import Link from 'next/link'
 import React from 'react'
 import { toast } from 'sonner'
 
@@ -33,7 +34,9 @@ function InterviewCard({ interview, viewDetail=false }) {
                 <Button className={'w-full'} onClick={onSend}> <Send /> Send</Button>
             </div>
             :
+            <Link href={'/scheduled-interview/' + interview?.interview_id + "/details"}>
             <Button className="mt-5 w-full" variant="outline">View Detail <ArrowRight /></Button>
+            </Link>
             }
         </div>
     )

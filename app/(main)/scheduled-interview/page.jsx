@@ -14,7 +14,7 @@ function ScheduledInterview() {
     user && GetInterviewList();
   },[user])
 
-  const GetInterviewList= async()=>{
+  const GetInterviewList= async ()=>{
     const result = await supabase.from('Interviews')
         .select('jobPosition,duration,interview_id,interview-feedback(userEmail)')
         .eq('userEmail',user?.email)
