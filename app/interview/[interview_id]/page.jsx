@@ -17,6 +17,7 @@ function Interview() {
   const [userName, setUserName]=useState();
   const [userEmail, setUserEmail]=useState();
   const [loading, setLoading]=useState(false);
+  const [errors, setErrors]=useState({ name: '', email: '' });
   const {interviewInfo, setInterviewInfo} = useContext(InterviewDataContext);
   const router = useRouter();
   
@@ -48,7 +49,47 @@ function Interview() {
     }
   }
 
+  // Fungsi untuk capitalize setiap kata
+  const capitalizeName = (name) => {
+    return name
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { name: '', email: '' };
+
+    // Validasi nama
+    if (!userName || userName.trim() === '') {
+      newErrors.name = 'Name is required';
+      isValid = false;
+    } else if (userName.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
+      isValid = false;
+    }
+
+    // Validasi email
+    if (!userEmail || userEmail.trim() === '') {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
+      newErrors.email = 'Please enter a valid email address';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const onJoinInterview = async () => {
+    if (!validateForm()) {
+      toast.error('Please fill in all fields correctly');
+      return;
+    }
+
     setLoading(true);
     let { data: Interviews, error } = await supabase
       .from('Interviews')
@@ -78,12 +119,30 @@ function Interview() {
 
             <div className='w-full max-w-sm mt-2'>
               <h2>Enter your full name</h2>
-              <Input placeholder='e.g. Faisal Alexander' onChange={(event)=>setUserName(event.target.value)}/>
+              <Input 
+                placeholder='e.g. Faisal Alexander' 
+                value={userName || ''}
+                onChange={(event)=>{
+                  const capitalizedName = capitalizeName(event.target.value);
+                  setUserName(capitalizedName);
+                  setErrors(prev => ({ ...prev, name: '' }));
+                }}
+                className={errors.name ? 'border-red-500' : ''}
+              />
+              {errors.name && <p className='text-red-500 text-sm mt-1'>{errors.name}</p>}
             </div>
 
             <div className='w-full max-w-sm mt-2'>
               <h2>Enter your Email</h2>
-              <Input placeholder='e.g. faisal@gmail.com' onChange={(event)=>setUserEmail(event.target.value)}/>
+              <Input 
+                placeholder='e.g. faisal@gmail.com' 
+                onChange={(event)=>{
+                  setUserEmail(event.target.value);
+                  setErrors(prev => ({ ...prev, email: '' }));
+                }}
+                className={errors.email ? 'border-red-500' : ''}
+              />
+              {errors.email && <p className='text-red-500 text-sm mt-1'>{errors.email}</p>}
             </div>
 
             <div className='p-3 bg-blue-100 flex gap-4 rounded-lg mt-5 '>
@@ -99,7 +158,7 @@ function Interview() {
             </div>
 
             <Button className={'mt-5 w-full font-bold max-w-sm'}
-              disabled={loading||!userName}
+              disabled={loading}
               onClick={()=>onJoinInterview()}
             >   
               <Video /> {loading && <Loader2Icon/>} Join Interview</Button>
