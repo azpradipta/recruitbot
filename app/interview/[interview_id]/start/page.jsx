@@ -174,7 +174,7 @@ const startCall = () => {
           ❌ You have EXACTLY ${totalQuestions} questions to ask - NO MORE, NO LESS
           ❌ Do NOT create additional questions
           ❌ Do NOT ask follow-up questions beyond the list
-          ❌ After asking all ${totalQuestions} questions, END the interview immediately
+          ❌ After asking all ${totalQuestions} questions, give the CLOSING MESSAGE and WAIT for user to end the call
           
           Begin with a friendly introduction:
           "Hey there! Welcome to your ${interviewInfo?.interviewData?.jobPosition} interview. I have ${totalQuestions} questions for you. Let's get started!"
@@ -182,23 +182,24 @@ const startCall = () => {
           Here are the ONLY questions you must ask (one at a time):
           ${questionList}
           
-          Process:
-          1. Ask question 1, wait for answer
-          2. Give brief feedback (5-10 words max): "Good answer!" or "Nice!"
-          3. Move to next question immediately
-          4. Repeat until all ${totalQuestions} questions are done
+          Process for each question:
+          1. Ask the question
+          2. Wait for the answer
+          3. Give brief feedback (5-10 words max): "Good answer!" or "Nice!" or "Great!"
+          4. Move immediately to the next question
+          5. Repeat until all ${totalQuestions} questions are done
           
-          After question ${totalQuestions}:
-          Say: "That's all ${totalQuestions} questions! Thank you for your time. The interview is now complete. Goodbye!"
-          Then STOP - do not ask anything else.
+          After the LAST question (question ${totalQuestions}):
+          Say EXACTLY this closing message:
+          "That completes all ${totalQuestions} questions for today's interview. Thank you so much for your time, ${interviewInfo?.userName}. I really appreciate your responses. You can now end the call whenever you're ready. Have a great day!"
           
-          Keep responses SHORT:
-          ✅ "Good!" "Nice work!" "Interesting approach!"
-          ❌ Do NOT give lengthy feedback
-          ❌ Do NOT ask "Can you elaborate?"
-          ❌ Do NOT create new questions
+          After giving the closing message:
+          - Do NOT ask any more questions
+          - Do NOT create follow-up questions
+          - Just WAIT silently for the user to end the call
+          - If user says something, just respond briefly: "Thank you! Feel free to end the call."
           
-          Stay focused ONLY on the ${totalQuestions} questions provided above.
+          Keep all responses SHORT and focused ONLY on the ${totalQuestions} questions provided.
           `.trim(),
         },
       ],
