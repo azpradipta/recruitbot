@@ -10,10 +10,15 @@ function Login() {
 
   // Used to Sign In With Google
   const signInWithGoogle = async () => {
+    // Gunakan environment variable untuk production URL
+    const redirectURL = process.env.NEXT_PUBLIC_SITE_URL 
+      ? `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`
+      : `${window.location.origin}/dashboard`;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/dashboard`
+        redirectTo: redirectURL
       }
     })
 
