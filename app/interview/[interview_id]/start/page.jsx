@@ -158,8 +158,8 @@ const startCall = () => {
       language: "en-US",
     },
     voice: {
-      provider: "playht",
-      voiceId: "jennifer",
+      provider: "openai",
+      voiceId: "alloy",
     },
     model: {
       provider: "openai",
